@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login Admin — KDP Sukapura</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:#f3f6fb;
+  font-family:Arial,sans-serif;
+  color:#172b55
+}
+
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  padding:30px;
+  border-radius:22px;
+  box-shadow:0 15px 45px #142b5520
+}
+
+.logo{
+  width:70px;
+  height:70px;
+  margin:0 auto 18px;
+  border-radius:18px;
+  background:#1557b0;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  font-weight:bold
+}
+
+h1{
+  margin:0;
+  text-align:center;
+  font-size:25px
+}
+
+.subtitle{
+  text-align:center;
+  color:#6b7894;
+  margin:8px 0 25px
+}
+
+label{
+  display:block;
+  margin:15px 0 7px;
+  font-weight:700
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d7deea;
+  border-radius:10px;
+  font-size:15px;
+  outline:none
+}
+
+input:focus{
+  border-color:#1557b0
+}
+
+button{
+  width:100%;
+  margin-top:20px;
+  padding:13px;
+  border:0;
+  border-radius:10px;
+  background:#1557b0;
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed
+}
+
+.message{
+  margin-top:15px;
+  padding:12px;
+  border-radius:10px;
+  display:none;
+  font-size:14px
+}
+
+.error{
+  display:block;
+  background:#fff0f0;
+  color:#b42318
+}
+
+.success{
+  display:block;
+  background:#ecfdf3;
+  color:#027a48
+}
+
+.back{
+  display:block;
+  text-align:center;
+  margin-top:20px;
+  color:#1557b0;
+  text-decoration:none;
+  font-weight:600
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+
+  <div class="logo">KS</div>
+
+  <h1>Login Admin</h1>
+  <div class="subtitle">Dashboard KDP Sukapura</div>
+
+  <form id="loginForm">
+
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      placeholder="Masukkan email"
+      autocomplete="username"
+      required
+    >
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      placeholder="Masukkan password"
+      autocomplete="current-password"
+      required
+    >
+
+    <button id="loginButton" type="submit">
+      Login
+    </button>
+
+  </form>
+
+  <div id="message" class="message"></div>
+
+  <a class="back" href="/index.html">
+    ← Kembali ke halaman utama
+  </a>
+
+</div>
+
+<script>
+const SUPABASE_URL =
+  "https://mdqexxvglyyaluhfzslx.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_c4Lh2xS1CBoeC4qKCyfctQ_FRWTZvVX";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const form = document.getElementById("loginForm");
+const button = document.getElementById("loginButton");
+const message = document.getElementById("message");
+
+function showMessage(text, type) {
+  message.textContent = text;
+  message.className = "message " + type;
+}
+
+form.addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  button.disabled = true;
+  button.textContent = "Memproses...";
+  message.className = "message";
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if (error) {
+    showMessage(
+      "Login gagal: " + error.message,
+      "error"
+    );
+
+    button.disabled = false;
+    button.textContent = "Login";
+    return;
+  }
+
+  if (data.session) {
+    showMessage(
+      "Login berhasil. Mengarahkan ke dashboard...",
+      "success"
+    );
+
+    setTimeout(() => {
+      window.location.href = "/dashboard.html";
+    }, 700);
+  }
+});
+</script>
+
+</body>
+</html>
